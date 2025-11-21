@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Appliances - EcoCompare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --light-green: #a8e6cf;
+            --accent-blue: #3498db;
+            --accent-orange: #f39c12;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --bg-light: #f8f9fa;
+            --white: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: var(--bg-light);
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 1.2rem 0;
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-green);
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            color: var(--primary-green);
+            background: rgba(46, 204, 113, 0.1);
+        }
+
+        .compare-btn {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            color: var(--white) !important;
+            padding: 0.7rem 1.5rem !important;
+            border-radius: 25px;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-banner h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-banner p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+
+        .filters-sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px var(--shadow);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filters-sidebar h3 {
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .filter-group {
+            margin-bottom: 2rem;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--text-dark);
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-green);
+        }
+
+        .reset-filters {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--text-light);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-filters:hover {
+            background: var(--text-dark);
+        }
+
+        .products-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .results-count {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        .sort-options {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sort-options label {
+            font-weight: 600;
+        }
+
+        .sort-options select {
+            padding: 0.6rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px var(--shadow);
+            border-color: var(--primary-green);
+        }
+
+        .product-card.selected {
+            border-color: var(--primary-green);
+            background: rgba(46, 204, 113, 0.05);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            background: var(--bg-light);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent-orange);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .product-badge.bestseller {
+            background: var(--accent-orange);
+        }
+
+        .product-badge.new {
+            background: var(--accent-blue);
+        }
+
+        .product-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-dark);
+        }
+
+        .product-brand {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .star-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: var(--accent-orange);
+            font-size: 1.2rem;
+        }
+
+        .rating-label {
+            background: var(--primary-green);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .product-specs {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .spec-label {
+            color: var(--text-light);
+        }
+
+        .spec-value {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .savings-highlight {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .savings-highlight .amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .savings-highlight .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn-compare {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid var(--primary-green);
+            background: white;
+            color: var(--primary-green);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-compare:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-compare.active {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-buy {
+            flex: 2;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, var(--accent-blue), #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { 
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-product-info {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary-green);
+        }
+
+        .modal-product-info h3 {
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .modal-product-info .price {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin: 0.5rem 0;
+        }
+
+        .payment-methods {
+            margin: 2rem 0;
+        }
+
+        .payment-methods h3 {
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+        }
+
+        .payment-option {
+            border: 2px solid #e0e0e0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .payment-option:hover {
+            border-color: var(--primary-green);
+            background: rgba(46, 204, 113, 0.05);
+            transform: translateX(5px);
+        }
+
+        .payment-option.selected {
+            border-color: var(--primary-green);
+            background: rgba(46, 204, 113, 0.1);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2);
+        }
+
+        .payment-option input[type="radio"] {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--primary-green);
+            cursor: pointer;
+        }
+
+        .payment-option-content {
+            flex: 1;
+        }
+
+        .payment-option-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-dark);
+        }
+
+        .payment-option-desc {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .payment-icon {
+            font-size: 2.5rem;
+        }
+
+        .qr-section {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border: 2px dashed var(--primary-green);
+        }
+
+        .qr-section.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                max-height: 0;
+            }
+            to { 
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+
+        .qr-section h4 {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+        }
+
+        .qr-code {
+            width: 250px;
+            height: 250px;
+            margin: 1rem auto;
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .upi-id {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            word-break: break-all;
+            border: 2px solid var(--primary-green);
+        }
+
+        .payment-instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .btn-cancel {
+            background: var(--text-light);
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: var(--text-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn-confirm:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border: 2px solid #28a745;
+            display: none;
+            animation: slideDown 0.3s ease;
+            font-weight: 600;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .comparison-panel {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -5px 20px var(--shadow);
+            padding: 2rem;
+            transition: bottom 0.4s ease;
+            z-index: 999;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .comparison-panel.active {
+            bottom: 0;
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .comparison-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+        }
+
+        .close-comparison {
+            background: var(--text-light);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .close-comparison:hover {
+            background: var(--text-dark);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .comparison-card {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 15px;
+            position: relative;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        .comparison-card .product-image {
+            height: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .remove-item {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-item:hover {
+            background: #c0392b;
+            transform: rotate(90deg);
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .no-results h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            background: var(--text-dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-sidebar {
+                position: static;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+
+            .hero-banner h1 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .product-actions {
+                flex-direction: column;
+            }
+
+            .btn-compare, .btn-buy {
+                flex: 1;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#" class="logo">🌿 EcoCompare</a>
+            <ul>
+                <li><a href="http://127.0.0.1:5500/Projects/IDEA%20LAB/Microproject/index.html">Home</a></li>
+                <li><a href="#">Appliances</a></li>
+                <li><a href="http://127.0.0.1:5500/Projects/IDEA%20LAB/Portfolio/Energy.html">Calculator</a></li>
+                <li><a href="http://127.0.0.1:5500/Projects/IDEA%20LAB/Microproject/index.html">About</a></li>
+                <li><a href="#" class="compare-btn" onclick="showComparison()">
+                    Compare (<span id="compareCount">0</span>)
+                </a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="hero-banner">
+        <h1>🔍 Browse Energy-Efficient Appliances</h1>
+        <p>Compare 500+ certified appliances and find the perfect match for your home</p>
+    </div>
+
+    <div class="main-content">
+        <aside class="filters-sidebar">
+            <h3>🎯 Filters</h3>
+            
+            <div class="filter-group">
+                <label>Category</label>
+                <select id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="refrigerator">Refrigerators</option>
+                    <option value="washing-machine">Washing Machines</option>
+                    <option value="air-conditioner">Air Conditioners</option>
+                    <option value="water-heater">Water Heaters</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Star Rating</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" value="5" class="star-filter"> ⭐⭐⭐⭐⭐ (5 Star)</label>
+                    <label><input type="checkbox" value="4" class="star-filter"> ⭐⭐⭐⭐ (4 Star)</label>
+                    <label><input type="checkbox" value="3" class="star-filter"> ⭐⭐⭐ (3 Star)</label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Technology</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" value="inverter" class="tech-filter"> Inverter</label>
+                    <label><input type="checkbox" value="smart" class="tech-filter"> Smart Connect</label>
+                    <label><input type="checkbox" value="eco" class="tech-filter"> Eco Mode</label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Brand</label>
+                <select id="brandFilter">
+                    <option value="all">All Brands</option>
+                    <option value="Samsung">Samsung</option>
+                    <option value="LG">LG</option>
+                    <option value="Whirlpool">Whirlpool</option>
+                    <option value="Haier">Haier</option>
+                    <option value="Godrej">Godrej</option>
+                    <option value="Voltas">Voltas</option>
+                    <option value="Daikin">Daikin</option>
+                </select>
+            </div>
+
+            <button class="reset-filters" onclick="resetFilters()">Reset Filters</button>
+        </aside>
+
+        <main class="products-section">
+            <div class="products-header">
+                <div class="results-count" id="resultsCount">Showing 24 appliances</div>
+                <div class="sort-options">
+                    <label>Sort by:</label>
+                    <select id="sortOptions">
+                        <option value="featured">Featured</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="savings-high">Savings: High to Low</option>
+                        <option value="rating">Star Rating</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="products-grid" id="productsGrid"></div>
+        </main>
+    </div>
+
+    <div class="modal" id="purchaseModal" onclick="closeModalOnBackdrop(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="success-message" id="successMessage">
+                ✅ Payment initiated successfully! Please complete the payment.
+            </div>
+            
+            <div class="modal-header">
+                <h2>🛒 Complete Your Purchase</h2>
+            </div>
+
+            <div class="modal-product-info" id="modalProductInfo"></div>
+
+            <div class="payment-methods">
+                <h3>💳 Select Payment Method</h3>
+                
+                <div class="payment-option" onclick="selectPayment('cash')">
+                    <input type="radio" name="payment" id="cashPayment" value="cash">
+                    <div class="payment-option-content">
+                        <div class="payment-option-title">💵 Cash on Delivery</div>
+                        <div class="payment-option-desc">Pay when you receive the product at your doorstep</div>
+                    </div>
+                    <div class="payment-icon">💰</div>
+                </div>
+
+                <div class="payment-option" onclick="selectPayment('upi')">
+                    <input type="radio" name="payment" id="upiPayment" value="upi">
+                    <div class="payment-option-content">
+                        <div class="payment-option-title">📱 UPI Payment</div>
+                        <div class="payment-option-desc">Pay instantly using any UPI app (GPay, PhonePe, Paytm)</div>
+                    </div>
+                    <div class="payment-icon">📲</div>
+                </div>
+            </div>
+
+            <div class="qr-section" id="qrSection">
+                <h4>📱 Scan QR Code to Pay</h4>
+                <div class="qr-code">
+                    <img id="qrImage" src="" alt="UPI QR Code">
+                </div>
+                <div class="upi-id">
+                    UPI ID: yourmerchant@upi
+                </div>
+                <div class="payment-instructions">
+                    ⚠️ <strong>Instructions:</strong> Open any UPI app (GPay, PhonePe, Paytm), scan the QR code above, verify the amount, and complete the payment. Click "Confirm Payment" after successful transaction.
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal()">✖ Cancel</button>
+                <button class="btn-modal btn-confirm" id="confirmBtn" onclick="confirmPurchase()" disabled>
+                    ✓ Confirm Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="comparison-panel" id="comparisonPanel">
+        <div class="comparison-header">
+            <h2>📊 Compare Selected Appliances</h2>
+            <button class="close-comparison" onclick="closeComparison()">✖ Close</button>
+        </div>
+        <div class="comparison-grid" id="comparisonGrid"></div>
+    </div>
+
+    <footer>
+        <p><strong>🌿 EcoCompare</strong> - Your trusted partner for energy-efficient appliances</p>
+        <p>Save money. Save energy. Save the planet.</p>
+        <p style="margin-top: 1rem; opacity: 0.7;">© 2024 EcoCompare. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const appliances = [
+            // Refrigerators
+            { id: 1, name: "Frost-Free Double Door 260L", brand: "Samsung", category: "refrigerator", stars: 5, rating: "BEE 5★", consumption: "220 kWh/year", cost: "₹1,980", savings: "₹2,800", features: ["inverter", "smart"], capacity: "260L", badge: "bestseller", price: 35999, image: "https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=400" },
+            { id: 2, name: "Smart Inverter 240L", brand: "LG", category: "refrigerator", stars: 5, rating: "BEE 5★", consumption: "210 kWh/year", cost: "₹1,890", savings: "₹2,950", features: ["inverter", "smart", "eco"], capacity: "240L", badge: "new", price: 38999, image: "https://images.unsplash.com/photo-1585659722983-3a675dabf23d?w=400" },
+            { id: 3, name: "IntelliFrost 235L", brand: "Whirlpool", category: "refrigerator", stars: 4, rating: "BEE 4★", consumption: "280 kWh/year", cost: "₹2,520", savings: "₹2,100", features: ["inverter"], capacity: "235L", badge: null, price: 29999, image: "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400" },
+            { id: 4, name: "EcoFresh 265L", brand: "Haier", category: "refrigerator", stars: 5, rating: "BEE 5★", consumption: "215 kWh/year", cost: "₹1,935", savings: "₹2,850", features: ["inverter", "eco"], capacity: "265L", badge: "bestseller", price: 32999, image: "https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=400" },
+            { id: 5, name: "GreenEdge 220L", brand: "Godrej", category: "refrigerator", stars: 4, rating: "BEE 4★", consumption: "270 kWh/year", cost: "₹2,430", savings: "₹2,250", features: ["eco"], capacity: "220L", badge: null, price: 27999, image: "https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=400" },
+            { id: 6, name: "FrostGuard 280L", brand: "Samsung", category: "refrigerator", stars: 3, rating: "BEE 3★", consumption: "340 kWh/year", cost: "₹3,060", savings: "₹1,450", features: [], capacity: "280L", badge: null, price: 24999, image: "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400" },
+            
+            // Washing Machines
+            { id: 7, name: "AI Direct Drive 7kg", brand: "LG", category: "washing-machine", stars: 5, rating: "BEE 5★", consumption: "180 kWh/year", cost: "₹1,620", savings: "₹2,400", features: ["inverter", "smart", "eco"], capacity: "7kg", badge: "bestseller", price: 28999, image: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=400" },
+            { id: 8, name: "EcoBubble 8kg", brand: "Samsung", category: "washing-machine", stars: 5, rating: "BEE 5★", consumption: "195 kWh/year", cost: "₹1,755", savings: "₹2,250", features: ["inverter", "eco"], capacity: "8kg", badge: "new", price: 31999, image: "https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=400" },
+            { id: 9, name: "Smart Care 7.5kg", brand: "Whirlpool", category: "washing-machine", stars: 4, rating: "BEE 4★", consumption: "240 kWh/year", cost: "₹2,160", savings: "₹1,850", features: ["inverter"], capacity: "7.5kg", badge: null, price: 24999, image: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=400" },
+            { id: 10, name: "AquaEnergy 6.5kg", brand: "Haier", category: "washing-machine", stars: 5, rating: "BEE 5★", consumption: "170 kWh/year", cost: "₹1,530", savings: "₹2,550", features: ["inverter", "smart"], capacity: "6.5kg", badge: "bestseller", price: 22999, image: "https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=400" },
+            { id: 11, name: "WashMaster 8kg", brand: "LG", category: "washing-machine", stars: 4, rating: "BEE 4★", consumption: "250 kWh/year", cost: "₹2,250", savings: "₹1,750", features: ["eco"], capacity: "8kg", badge: null, price: 26999, image: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=400" },
+            { id: 12, name: "TurboClean 7kg", brand: "Samsung", category: "washing-machine", stars: 3, rating: "BEE 3★", consumption: "310 kWh/year", cost: "₹2,790", savings: "₹1,200", features: [], capacity: "7kg", badge: null, price: 19999, image: "https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=400" },
+            
+            // Air Conditioners
+            { id: 13, name: "Inverter Split 1.5 Ton", brand: "Daikin", category: "air-conditioner", stars: 5, rating: "BEE 5★", consumption: "850 kWh/year", cost: "₹7,650", savings: "₹6,400", features: ["inverter", "smart", "eco"], capacity: "1.5 Ton", badge: "bestseller", price: 45999, image: "https://images.unsplash.com/photo-1631545806609-7f0d1c4b9c57?w=400" },
+            { id: 14, name: "AI Convertible 1.5 Ton", brand: "LG", category: "air-conditioner", stars: 5, rating: "BEE 5★", consumption: "870 kWh/year", cost: "₹7,830", savings: "₹6,200", features: ["inverter", "smart"], capacity: "1.5 Ton", badge: "new", price: 42999, image: "https://images.unsplash.com/photo-1585394946371-371e2b5f05b4?w=400" },
+            { id: 15, name: "WindFree 1.5 Ton", brand: "Samsung", category: "air-conditioner", stars: 5, rating: "BEE 5★", consumption: "860 kWh/year", cost: "₹7,740", savings: "₹6,300", features: ["inverter", "eco"], capacity: "1.5 Ton", badge: "bestseller", price: 44999, image: "https://images.unsplash.com/photo-1631545806609-7f0d1c4b9c57?w=400" },
+            { id: 16, name: "QuietCool 1.5 Ton", brand: "Voltas", category: "air-conditioner", stars: 4, rating: "BEE 4★", consumption: "1020 kWh/year", cost: "₹9,180", savings: "₹4,850", features: ["inverter"], capacity: "1.5 Ton", badge: null, price: 36999, image: "https://images.unsplash.com/photo-1585394946371-371e2b5f05b4?w=400" },
+            { id: 17, name: "PowerCool 1 Ton", brand: "Haier", category: "air-conditioner", stars: 5, rating: "BEE 5★", consumption: "680 kWh/year", cost: "₹6,120", savings: "₹4,900", features: ["inverter", "eco"], capacity: "1 Ton", badge: null, price: 32999, image: "https://images.unsplash.com/photo-1631545806609-7f0d1c4b9c57?w=400" },
+            { id: 18, name: "ClassicCool 1.5 Ton", brand: "Voltas", category: "air-conditioner", stars: 3, rating: "BEE 3★", consumption: "1280 kWh/year", cost: "₹11,520", savings: "₹2,500", features: [], capacity: "1.5 Ton", badge: null, price: 28999, image: "https://images.unsplash.com/photo-1585394946371-371e2b5f05b4?w=400" },
+            
+            // Water Heaters
+            { id: 19, name: "Solar Smart 25L", brand: "LG", category: "water-heater", stars: 5, rating: "BEE 5★", consumption: "580 kWh/year", cost: "₹5,220", savings: "₹3,800", features: ["smart", "eco"], capacity: "25L", badge: "new", price: 18999, image: "https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=400" },
+            { id: 20, name: "Instant Eco 15L", brand: "Samsung", category: "water-heater", stars: 5, rating: "BEE 5★", consumption: "420 kWh/year", cost: "₹3,780", savings: "₹2,950", features: ["eco"], capacity: "15L", badge: "bestseller", price: 12999, image: "https://images.unsplash.com/photo-1600428977359-76295476d053?w=400" },
+            { id: 21, name: "ThermoGuard 25L", brand: "Haier", category: "water-heater", stars: 4, rating: "BEE 4★", consumption: "680 kWh/year", cost: "₹6,120", savings: "₹2,900", features: ["eco"], capacity: "25L", badge: null, price: 15999, image: "https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=400" },
+            { id: 22, name: "HeatMaster 20L", brand: "Whirlpool", category: "water-heater", stars: 5, rating: "BEE 5★", consumption: "520 kWh/year", cost: "₹4,680", savings: "₹3,350", features: ["smart", "eco"], capacity: "20L", badge: null, price: 16999, image: "https://images.unsplash.com/photo-1600428977359-76295476d053?w=400" },
+            { id: 23, name: "QuickHeat 15L", brand: "Godrej", category: "water-heater", stars: 4, rating: "BEE 4★", consumption: "590 kWh/year", cost: "₹5,310", savings: "₹2,720", features: [], capacity: "15L", badge: null, price: 11999, image: "https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=400" },
+            { id: 24, name: "PowerHeat 25L", brand: "Samsung", category: "water-heater", stars: 3, rating: "BEE 3★", consumption: "780 kWh/year", cost: "₹7,020", savings: "₹2,000", features: [], capacity: "25L", badge: null, price: 9999, image: "https://images.unsplash.com/photo-1600428977359-76295476d053?w=400" }
+        ];
+
+        let filteredAppliances = [...appliances];
+        let comparisonList = [];
+        let currentProduct = null;
+        let selectedPaymentMethod = null;
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            if (filteredAppliances.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <h3>😔 No appliances found</h3>
+                        <p>Try adjusting your filters to see more results</p>
+                    </div>
+                `;
+                document.getElementById('resultsCount').textContent = 'No appliances found';
+                return;
+            }
+
+            document.getElementById('resultsCount').textContent = `Showing ${filteredAppliances.length} appliances`;
+
+            filteredAppliances.forEach(appliance => {
+                const isSelected = comparisonList.some(item => item.id === appliance.id);
+                const card = document.createElement('div');
+                card.className = `product-card ${isSelected ? 'selected' : ''}`;
+                card.innerHTML = `
+                    ${appliance.badge ? `<div class="product-badge ${appliance.badge}">${appliance.badge === 'bestseller' ? '🏆 Bestseller' : '✨ New'}</div>` : ''}
+                    <div class="product-image">
+                        <img src="${appliance.image}" alt="${appliance.name}" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <h3>${appliance.name}</h3>
+                        <div class="product-brand">${appliance.brand}</div>
+                        <div class="product-price">₹${appliance.price.toLocaleString()}</div>
+                        <div class="star-rating">
+                            <span class="stars">${'⭐'.repeat(appliance.stars)}</span>
+                            <span class="rating-label">${appliance.rating}</span>
+                        </div>
+                        <div class="product-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Capacity:</span>
+                                <span class="spec-value">${appliance.capacity}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Annual Usage:</span>
+                                <span class="spec-value">${appliance.consumption}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Annual Cost:</span>
+                                <span class="spec-value">${appliance.cost}</span>
+                            </div>
+                        </div>
+                        <div class="savings-highlight">
+                            <span class="amount">${appliance.savings}</span>
+                            <span class="label">Annual Savings vs 3★ Model</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-compare ${isSelected ? 'active' : ''}" onclick="toggleCompare(${appliance.id})">
+                                ${isSelected ? '✓ Added' : '+ Compare'}
+                            </button>
+                            <button class="btn-buy" onclick="openPurchaseModal(${appliance.id})">
+                                🛒 Buy Now
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function applyFilters() {
+            const category = document.getElementById('categoryFilter').value;
+            const brand = document.getElementById('brandFilter').value;
+            const starFilters = Array.from(document.querySelectorAll('.star-filter:checked')).map(cb => parseInt(cb.value));
+            const techFilters = Array.from(document.querySelectorAll('.tech-filter:checked')).map(cb => cb.value);
+
+            filteredAppliances = appliances.filter(appliance => {
+                if (category !== 'all' && appliance.category !== category) return false;
+                if (brand !== 'all' && appliance.brand !== brand) return false;
+                if (starFilters.length > 0 && !starFilters.includes(appliance.stars)) return false;
+                if (techFilters.length > 0 && !techFilters.some(tech => appliance.features.includes(tech))) return false;
+                return true;
+            });
+
+            sortProducts();
+            renderProducts();
+        }
+
+        function sortProducts() {
+            const sortOption = document.getElementById('sortOptions').value;
+            
+            filteredAppliances.sort((a, b) => {
+                switch(sortOption) {
+                    case 'price-low':
+                        return a.price - b.price;
+                    case 'price-high':
+                        return b.price - a.price;
+                    case 'savings-high':
+                        return parseInt(b.savings.replace(/[₹,]/g, '')) - parseInt(a.savings.replace(/[₹,]/g, ''));
+                    case 'rating':
+                        return b.stars - a.stars;
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('categoryFilter').value = 'all';
+            document.getElementById('brandFilter').value = 'all';
+            document.querySelectorAll('.star-filter').forEach(cb => cb.checked = false);
+            document.querySelectorAll('.tech-filter').forEach(cb => cb.checked = false);
+            applyFilters();
+        }
+
+        function toggleCompare(id) {
+            const appliance = appliances.find(a => a.id === id);
+            const index = comparisonList.findIndex(item => item.id === id);
+
+            if (index > -1) {
+                comparisonList.splice(index, 1);
+            } else {
+                if (comparisonList.length >= 3) {
+                    alert('⚠️ You can compare up to 3 appliances at a time. Please remove one to add another.');
+                    return;
+                }
+                comparisonList.push(appliance);
+            }
+
+            updateCompareCount();
+            renderProducts();
+            renderComparison();
+        }
+
+        function updateCompareCount() {
+            document.getElementById('compareCount').textContent = comparisonList.length;
+        }
+
+        function showComparison() {
+            if (comparisonList.length === 0) {
+                alert('⚠️ Please select at least one appliance to compare');
+                return;
+            }
+            document.getElementById('comparisonPanel').classList.add('active');
+            renderComparison();
+        }
+
+        function closeComparison() {
+            document.getElementById('comparisonPanel').classList.remove('active');
+        }
+
+        function renderComparison() {
+            const grid = document.getElementById('comparisonGrid');
+            grid.innerHTML = '';
+
+            if (comparisonList.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: var(--text-light); grid-column: 1 / -1; padding: 2rem;">No appliances selected for comparison</p>';
+                return;
+            }
+
+            comparisonList.forEach(appliance => {
+                const card = document.createElement('div');
+                card.className = 'comparison-card';
+                card.innerHTML = `
+                    <button class="remove-item" onclick="toggleCompare(${appliance.id})" title="Remove from comparison">×</button>
+                    <div class="product-image">
+                        <img src="${appliance.image}" alt="${appliance.name}">
+                    </div>
+                    <h3>${appliance.name}</h3>
+                    <div class="product-brand">${appliance.brand}</div>
+                    <div class="product-price">₹${appliance.price.toLocaleString()}</div>
+                    <div class="star-rating">
+                        <span class="stars">${'⭐'.repeat(appliance.stars)}</span>
+                        <span class="rating-label">${appliance.rating}</span>
+                    </div>
+                    <div class="product-specs" style="margin-top: 1rem;">
+                        <div class="spec-item">
+                            <span class="spec-label">Category:</span>
+                            <span class="spec-value">${appliance.category.replace(/-/g, ' ').toUpperCase()}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Capacity:</span>
+                            <span class="spec-value">${appliance.capacity}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Annual Consumption:</span>
+                            <span class="spec-value">${appliance.consumption}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Annual Cost:</span>
+                            <span class="spec-value">${appliance.cost}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Annual Savings:</span>
+                            <span class="spec-value" style="color: var(--primary-green);">${appliance.savings}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Features:</span>
+                            <span class="spec-value">${appliance.features.length > 0 ? appliance.features.join(', ').toUpperCase() : 'Standard'}</span>
+                        </div>
+                    </div>
+                    <button class="btn-buy" style="width: 100%; margin-top: 1rem;" onclick="openPurchaseModal(${appliance.id})">
+                        🛒 Buy Now - ₹${appliance.price.toLocaleString()}
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openPurchaseModal(id) {
+            currentProduct = appliances.find(a => a.id === id);
+            selectedPaymentMethod = null;
+            
+            const modalProductInfo = document.getElementById('modalProductInfo');
+            modalProductInfo.innerHTML = `
+                <h3>${currentProduct.name}</h3>
+                <p style="color: var(--text-light); margin: 0.5rem 0;">${currentProduct.brand} • ${currentProduct.category.replace(/-/g, ' ').toUpperCase()}</p>
+                <div class="price">₹${currentProduct.price.toLocaleString()}</div>
+                <div style="margin-top: 1rem; font-size: 0.9rem;">
+                    <div style="margin-bottom: 0.5rem;">⭐ ${currentProduct.rating} • ${currentProduct.capacity}</div>
+                    <div style="color: var(--primary-green); font-weight: 600;">
+                        💚 Save ${currentProduct.savings} annually on electricity bills
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('cashPayment').checked = false;
+            document.getElementById('upiPayment').checked = false;
+            document.getElementById('qrSection').classList.remove('active');
+            document.getElementById('confirmBtn').disabled = true;
+            document.getElementById('successMessage').classList.remove('active');
+            
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            paymentOptions.forEach(option => option.classList.remove('selected'));
+            
+            document.getElementById('purchaseModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+            
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            paymentOptions.forEach(option => option.classList.remove('selected'));
+            
+            if (method === 'cash') {
+                document.getElementById('cashPayment').checked = true;
+                document.getElementById('qrSection').classList.remove('active');
+                event.currentTarget.classList.add('selected');
+            } else if (method === 'upi') {
+                document.getElementById('upiPayment').checked = true;
+                document.getElementById('qrSection').classList.add('active');
+                event.currentTarget.classList.add('selected');
+                
+                const qrCode = document.getElementById('qrImage');
+                const amount = currentProduct.price;
+                const upiString = `upi://pay?pa=yourmerchant@upi&pn=EcoCompare&am=${amount}&cu=INR&tn=Purchase-${currentProduct.name.replace(/\s+/g, '-')}`;
+                qrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+            }
+            
+            document.getElementById('confirmBtn').disabled = false;
+        }
+
+        function closeModal() {
+            document.getElementById('purchaseModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            currentProduct = null;
+            selectedPaymentMethod = null;
+        }
+
+        function closeModalOnBackdrop(event) {
+            if (event.target.id === 'purchaseModal') {
+                closeModal();
+            }
+        }
+
+        function confirmPurchase() {
+            if (!selectedPaymentMethod) {
+                alert('⚠️ Please select a payment method');
+                return;
+            }
+
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.add('active');
+
+            if (selectedPaymentMethod === 'cash') {
+                setTimeout(() => {
+                    alert(`✅ Order Confirmed Successfully!\n\n📦 Product: ${currentProduct.name}\n💰 Price: ₹${currentProduct.price.toLocaleString()}\n💵 Payment: Cash on Delivery\n\n✓ Your order has been placed successfully!\n✓ You will receive a confirmation email shortly\n✓ Please keep ₹${currentProduct.price.toLocaleString()} ready for delivery\n✓ Expected delivery: 3-5 business days\n\nThank you for choosing EcoCompare! 🌿`);
+                    closeModal();
+                }, 1000);
+            } else if (selectedPaymentMethod === 'upi') {
+                setTimeout(() => {
+                    alert(`✅ Payment Initiated Successfully!\n\n📦 Product: ${currentProduct.name}\n💰 Amount: ₹${currentProduct.price.toLocaleString()}\n📱 Payment Method: UPI\n\n📲 Please complete the payment:\n1. Open any UPI app (GPay, PhonePe, Paytm)\n2. Scan the QR code shown above\n3. Verify the amount\n4. Complete the transaction\n\n💡 UPI ID: yourmerchant@upi\n\n✓ After successful payment, your order will be confirmed automatically\n✓ You will receive confirmation via email and SMS\n\nThank you for choosing EcoCompare! 🌿`);
+                    closeModal();
+                }, 1000);
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+        document.getElementById('brandFilter').addEventListener('change', applyFilters);
+        document.getElementById('sortOptions').addEventListener('change', () => {
+            sortProducts();
+            renderProducts();
+        });
+        document.querySelectorAll('.star-filter, .tech-filter').forEach(checkbox => {
+            checkbox.addEventListener('change', applyFilters);
+        });
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('purchaseModal').classList.contains('active')) {
+                    closeModal();
+                }
+                if (document.getElementById('comparisonPanel').classList.contains('active')) {
+                    closeComparison();
+                }
+            }
+        });
+
+        // Initial render
+        renderProducts();
+    </script>
+</body>
+</html>

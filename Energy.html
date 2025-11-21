@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Savings Calculator - EcoCompare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --light-green: #a8e6cf;
+            --accent-blue: #3498db;
+            --accent-orange: #f39c12;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --bg-light: #f8f9fa;
+            --white: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --danger: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: var(--bg-light);
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 1.2rem 0;
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-green);
+            text-decoration: none;
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            color: var(--primary-green);
+            background: rgba(46, 204, 113, 0.1);
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-banner h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-banner p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .calculator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .calculator-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .calculator-card h2 {
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 0.3rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .slider-container {
+            margin-top: 1rem;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            cursor: pointer;
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn-reset {
+            width: 100%;
+            padding: 1rem;
+            background: var(--text-light);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .btn-reset:hover {
+            background: var(--text-dark);
+        }
+
+        .results-panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px var(--shadow);
+            display: none;
+        }
+
+        .results-panel.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-header h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+        }
+
+        .result-card.warning {
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #e67e22 100%);
+        }
+
+        .result-card.info {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #2980b9 100%);
+        }
+
+        .result-card.danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%);
+        }
+
+        .result-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-card .label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .comparison-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: var(--primary-green);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table .better {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        .comparison-table .worse {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .bar-chart {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            height: 300px;
+            margin-top: 1.5rem;
+        }
+
+        .bar {
+            flex: 1;
+            background: var(--primary-green);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            min-height: 20px;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar.old {
+            background: var(--danger);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .recommendations {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .recommendations h3 {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendations li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: start;
+            gap: 0.5rem;
+        }
+
+        .recommendations li:last-child {
+            border-bottom: none;
+        }
+
+        .recommendations li::before {
+            content: '✓';
+            color: var(--primary-green);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 968px) {
+            .calculator-container {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-banner h1 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#" onclick="navigateTo('index')" class="logo">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#2ecc71"/>
+                    <path d="M50 20 L55 35 L70 35 L58 45 L63 60 L50 50 L37 60 L42 45 L30 35 L45 35 Z" fill="#fff"/>
+                    <circle cx="50" cy="70" r="8" fill="#fff"/>
+                </svg>
+                EcoCompare
+            </a>
+            <ul>
+                <li><a href="http://127.0.0.1:5500/Projects/IDEA%20LAB/Microproject/index.html">Home</a></li>
+                <li><a href="http://127.0.0.1:5500/Projects/IDEA%20LAB/Microproject/appliances.html#">Appliances</a></li>
+                <li><a href="#">Calculator</a></li>
+                <li><a href="http://127.0.0.1:5500/Projects/IDEA%20LAB/Microproject/index.html" >About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="hero-banner">
+        <h1>💡 Energy Savings Calculator</h1>
+        <p>Calculate how much you can save by upgrading to energy-efficient appliances</p>
+    </div>
+
+    <div class="main-content">
+        <div class="calculator-container">
+            <div class="calculator-card">
+                <h2>🏠 Your Current Appliance</h2>
+                <form id="currentApplianceForm">
+                    <div class="form-group">
+                        <label>Appliance Type</label>
+                        <select id="applianceType" required>
+                            <option value="">Select Appliance</option>
+                            <option value="refrigerator">Refrigerator</option>
+                            <option value="ac">Air Conditioner</option>
+                            <option value="washing-machine">Washing Machine</option>
+                            <option value="water-heater">Water Heater</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Star Rating</label>
+                        <select id="currentRating" required>
+                            <option value="">Select Rating</option>
+                            <option value="1">1 Star</option>
+                            <option value="2">2 Star</option>
+                            <option value="3">3 Star</option>
+                            <option value="4">4 Star</option>
+                            <option value="5">5 Star</option>
+                            <option value="0">No Rating/Old Model</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Daily Usage Hours</label>
+                        <input type="number" id="usageHours" min="1" max="24" value="8" required>
+                        <div class="slider-container">
+                            <input type="range" id="usageSlider" class="slider" min="1" max="24" value="8">
+                            <div class="slider-value">
+                                <span>1 hr</span>
+                                <span id="sliderValue">8 hrs</span>
+                                <span>24 hrs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Appliance Age (Years)</label>
+                        <input type="number" id="applianceAge" min="0" max="30" value="5" required>
+                        <small>Older appliances typically consume more energy</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Electricity Rate (₹/kWh)</label>
+                        <input type="number" id="electricityRate" min="1" max="20" step="0.1" value="9" required>
+                        <small>Average rate in India: ₹7-12 per kWh</small>
+                    </div>
+                </form>
+            </div>
+
+            <div class="calculator-card">
+                <h2>⭐ Upgrade to Energy-Efficient</h2>
+                <form id="newApplianceForm">
+                    <div class="form-group">
+                        <label>Target Star Rating</label>
+                        <select id="targetRating" required>
+                            <option value="">Select Rating</option>
+                            <option value="5" selected>5 Star (Best)</option>
+                            <option value="4">4 Star</option>
+                            <option value="3">3 Star</option>
+                        </select>
+                        <small>Higher star ratings = Better efficiency</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Inverter Technology</label>
+                        <select id="inverter" required>
+                            <option value="yes" selected>Yes (Recommended)</option>
+                            <option value="no">No</option>
+                        </select>
+                        <small>Inverter models save 20-40% more energy</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estimated Upgrade Cost (₹)</label>
+                        <input type="number" id="upgradeCost" min="0" step="1000" value="30000" required>
+                        <small>Average cost for energy-efficient appliances</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Capacity/Size</label>
+                        <select id="capacity">
+                            <option value="small">Small (200-300L / 1 Ton / 6kg)</option>
+                            <option value="medium" selected>Medium (300-400L / 1.5 Ton / 7-8kg)</option>
+                            <option value="large">Large (400-500L / 2 Ton / 9-10kg)</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn-calculate" onclick="calculateSavings()">Calculate Savings</button>
+                    <button type="button" class="btn-reset" onclick="resetCalculator()">Reset</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="results-panel" id="resultsPanel">
+            <div class="results-header">
+                <h2>📊 Your Savings Report</h2>
+                <p>Here's how much you can save by upgrading to an energy-efficient appliance</p>
+            </div>
+
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="icon">💰</div>
+                    <span class="value" id="annualSavings">₹0</span>
+                    <span class="label">Annual Savings</span>
+                </div>
+                <div class="result-card info">
+                    <div class="icon">📅</div>
+                    <span class="value" id="fiveYearSavings">₹0</span>
+                    <span class="label">5-Year Savings</span>
+                </div>
+                <div class="result-card warning">
+                    <div class="icon">⏱️</div>
+                    <span class="value" id="paybackPeriod">0</span>
+                    <span class="label">Payback Period</span>
+                </div>
+                <div class="result-card">
+                    <div class="icon">🌱</div>
+                    <span class="value" id="co2Reduction">0</span>
+                    <span class="label">CO₂ Saved Annually</span>
+                </div>
+            </div>
+
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Current Appliance</th>
+                            <th>Energy-Efficient</th>
+                            <th>Difference</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-container">
+                <h3>💸 Cost Comparison Over Time</h3>
+                <div class="bar-chart" id="barChart"></div>
+            </div>
+
+            <div class="recommendations">
+                <h3>💡 Personalized Recommendations</h3>
+                <ul id="recommendationsList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sync slider with input
+        const usageSlider = document.getElementById('usageSlider');
+        const usageHours = document.getElementById('usageHours');
+        const sliderValue = document.getElementById('sliderValue');
+
+        usageSlider.addEventListener('input', (e) => {
+            usageHours.value = e.target.value;
+            sliderValue.textContent = e.target.value + ' hrs';
+        });
+
+        usageHours.addEventListener('input', (e) => {
+            usageSlider.value = e.target.value;
+            sliderValue.textContent = e.target.value + ' hrs';
+        });
+
+        // Energy consumption data (kWh per year for different star ratings)
+        const energyData = {
+            refrigerator: { 0: 800, 1: 600, 2: 500, 3: 400, 4: 280, 5: 220 },
+            ac: { 0: 1800, 1: 1500, 2: 1300, 3: 1100, 4: 1020, 5: 850 },
+            'washing-machine': { 0: 400, 1: 350, 2: 300, 3: 250, 4: 240, 5: 180 },
+            'water-heater': { 0: 900, 1: 800, 2: 750, 3: 650, 4: 680, 5: 580 }
+        };
+
+        function calculateSavings() {
+            const applianceType = document.getElementById('applianceType').value;
+            const currentRating = parseInt(document.getElementById('currentRating').value);
+            const targetRating = parseInt(document.getElementById('targetRating').value);
+            const usageHrs = parseFloat(document.getElementById('usageHours').value);
+            const age = parseInt(document.getElementById('applianceAge').value);
+            const rate = parseFloat(document.getElementById('electricityRate').value);
+            const hasInverter = document.getElementById('inverter').value === 'yes';
+            const upgradeCost = parseFloat(document.getElementById('upgradeCost').value);
+
+            if (!applianceType || isNaN(currentRating) || isNaN(targetRating)) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Base energy consumption
+            let currentConsumption = energyData[applianceType][currentRating];
+            let newConsumption = energyData[applianceType][targetRating];
+
+            // Adjust for usage hours (assuming base is 8 hours)
+            const usageFactor = usageHrs / 8;
+            currentConsumption *= usageFactor;
+            newConsumption *= usageFactor;
+
+            // Age degradation (5% per year)
+            currentConsumption *= (1 + (age * 0.05));
+
+            // Inverter savings (additional 25%)
+            if (hasInverter) {
+                newConsumption *= 0.75;
+            }
+
+            // Calculate costs
+            const currentAnnualCost = currentConsumption * rate;
+            const newAnnualCost = newConsumption * rate;
+            const annualSavings = currentAnnualCost - newAnnualCost;
+            const fiveYearSavings = annualSavings * 5;
+            const paybackYears = upgradeCost / annualSavings;
+            const co2Saved = ((currentConsumption - newConsumption) * 0.85 / 1000).toFixed(2); // kg CO2 per kWh
+
+            // Display results
+            document.getElementById('annualSavings').textContent = '₹' + Math.round(annualSavings).toLocaleString();
+            document.getElementById('fiveYearSavings').textContent = '₹' + Math.round(fiveYearSavings).toLocaleString();
+            document.getElementById('paybackPeriod').textContent = paybackYears.toFixed(1) + ' years';
+            document.getElementById('co2Reduction').textContent = co2Saved + ' tons';
+
+            // Update comparison table
+            const tableBody = document.getElementById('comparisonTableBody');
+            tableBody.innerHTML = `
+                <tr>
+                    <td><strong>Annual Consumption</strong></td>
+                    <td class="worse">${Math.round(currentConsumption)} kWh</td>
+                    <td class="better">${Math.round(newConsumption)} kWh</td>
+                    <td class="better">-${Math.round(currentConsumption - newConsumption)} kWh</td>
+                </tr>
+                <tr>
+                    <td><strong>Annual Cost</strong></td>
+                    <td class="worse">₹${Math.round(currentAnnualCost).toLocaleString()}</td>
+                    <td class="better">₹${Math.round(newAnnualCost).toLocaleString()}</td>
+                    <td class="better">-₹${Math.round(annualSavings).toLocaleString()}</td>
+                </tr>
+                <tr>
+                    <td><strong>Monthly Cost</strong></td>
+                    <td class="worse">₹${Math.round(currentAnnualCost/12).toLocaleString()}</td>
+                    <td class="better">₹${Math.round(newAnnualCost/12).toLocaleString()}</td>
+                    <td class="better">-₹${Math.round(annualSavings/12).toLocaleString()}</td>
+                </tr>
+                <tr>
+                    <td><strong>10-Year Cost</strong></td>
+                    <td class="worse">₹${Math.round(currentAnnualCost * 10).toLocaleString()}</td>
+                    <td class="better">₹${Math.round(newAnnualCost * 10).toLocaleString()}</td>
+                    <td class="better">-₹${Math.round(annualSavings * 10).toLocaleString()}</td>
+                </tr>
+            `;
+
+            // Create bar chart
+            createBarChart(currentAnnualCost, newAnnualCost, annualSavings);
+
+            // Generate recommendations
+            generateRecommendations(paybackYears, annualSavings, co2Saved, hasInverter, currentRating);
+
+            // Show results
+            document.getElementById('resultsPanel').classList.add('active');
+            document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function createBarChart(oldCost, newCost, savings) {
+            const chartDiv = document.getElementById('barChart');
+            const maxValue = Math.max(oldCost, newCost);
+            
+            const oldHeight = (oldCost / maxValue) * 100;
+            const newHeight = (newCost / maxValue) * 100;
+
+            chartDiv.innerHTML = `
+                <div class="bar old" style="height: ${oldHeight}%">
+                    <div class="bar-value">₹${Math.round(oldCost).toLocaleString()}</div>
+                    <div class="bar-label">Current Appliance</div>
+                </div>
+                <div class="bar" style="height: ${newHeight}%">
+                    <div class="bar-value">₹${Math.round(newCost).toLocaleString()}</div>
+                    <div class="bar-label">Energy-Efficient</div>
+                </div>
+            `;
+        }
+
+        function generateRecommendations(payback, savings, co2, hasInverter, currentRating) {
+            const list = document.getElementById('recommendationsList');
+            const recommendations = [];
+
+            if (payback < 3) {
+                recommendations.push('Excellent investment! Your upgrade will pay for itself in under 3 years.');
+            } else if (payback < 5) {
+                recommendations.push('Good investment! Reasonable payback period with significant long-term savings.');
+            } else {
+                recommendations.push('Consider waiting for sales or promotions to reduce upfront costs.');
+            }
+
+            if (savings > 5000) {
+                recommendations.push(`You'll save over ₹${Math.round(savings).toLocaleString()} annually - that's significant!`);
+            }
+
+            if (!hasInverter) {
+                recommendations.push('Consider upgrading to an inverter model for an additional 20-40% energy savings.');
+            }
+
+            if (currentRating <= 2 || currentRating === 0) {
+                recommendations.push('Your current appliance is very inefficient. Upgrading now will provide maximum benefits.');
+            }
+
+            if (co2 > 0.5) {
+                recommendations.push(`You'll reduce your carbon footprint by ${co2} tons CO₂ annually - equivalent to planting ${Math.round(co2 * 20)} trees!`);
+            }
+
+            recommendations.push('Look for BEE 5-star rated appliances with the latest energy-saving technologies.');
+            recommendations.push('Check for government subsidies or cashback offers on energy-efficient appliances.');
+            recommendations.push('Proper maintenance can improve efficiency by an additional 10-15%.');
+
+            list.innerHTML = recommendations.map(rec => `<li>${rec}</li>`).join('');
+        }
+
+        function resetCalculator() {
+            document.getElementById('currentApplianceForm').reset();
+            document.getElementById('newApplianceForm').reset();
+            document.getElementById('resultsPanel').classList.remove('active');
+            usageSlider.value = 8;
+            usageHours.value = 8;
+            sliderValue.textContent = '8 hrs';
+        }
+
+        function navigateTo(page) {
+            alert(`Navigation to ${page}.html - In production, this would link to separate HTML files.`);
+        }
+    </script>
+</body>
+</html>
